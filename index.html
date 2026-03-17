@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>My Tasks — Sign in</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --bg:#f5f5f3;
+  --card:#ffffff;
+  --text:#1a1a1a;
+  --text-secondary:#6b6b6b;
+  --text-tertiary:#9a9a9a;
+  --border:rgba(0,0,0,0.09);
+  --border-hover:rgba(0,0,0,0.18);
+  --radius-md:10px;
+  --radius-lg:16px;
+}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+
+/* subtle grid pattern */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+  background-size:40px 40px;
+  pointer-events:none;
+}
+
+.card{
+  background:var(--card);
+  border:0.5px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:40px 40px 36px;
+  width:100%;
+  max-width:400px;
+  position:relative;
+  box-shadow:0 1px 3px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
+}
+
+.logo-row{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+.logo-icon{width:36px;height:36px;background:#1a1a1a;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-icon svg{width:18px;height:18px}
+.logo-name{font-size:17px;font-weight:600;letter-spacing:-.02em;color:var(--text)}
+
+.heading{font-size:22px;font-weight:600;letter-spacing:-.02em;color:var(--text);margin-bottom:6px}
+.subheading{font-size:14px;color:var(--text-secondary);margin-bottom:32px;line-height:1.5}
+
+.oauth-btn{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  width:100%;
+  padding:11px 16px;
+  border:0.5px solid var(--border-hover);
+  border-radius:var(--radius-md);
+  background:#fff;
+  color:var(--text);
+  font-family:var(--font);
+  font-size:14px;
+  font-weight:500;
+  cursor:pointer;
+  transition:all .15s;
+  margin-bottom:10px;
+  text-align:left;
+}
+.oauth-btn:hover{
+  background:#fafaf8;
+  border-color:rgba(0,0,0,0.26);
+}
+.oauth-btn:active{transform:scale(.99)}
+.oauth-btn:last-of-type{margin-bottom:0}
+
+.btn-icon{
+  width:20px;
+  height:20px;
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.btn-text{flex:1}
+.btn-arrow{
+  font-size:16px;
+  color:var(--text-tertiary);
+  transition:transform .15s;
+}
+.oauth-btn:hover .btn-arrow{transform:translateX(2px)}
+
+.divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:24px 0;
+}
+.divider-line{flex:1;height:0.5px;background:var(--border)}
+.divider-text{font-size:12px;color:var(--text-tertiary)}
+
+.email-field{margin-bottom:10px}
+.email-field label{display:block;font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:5px}
+.email-field input{
+  width:100%;
+  padding:10px 12px;
+  font-size:14px;
+  border:0.5px solid var(--border-hover);
+  border-radius:var(--radius-md);
+  background:#fff;
+  color:var(--text);
+  font-family:var(--font);
+  transition:border-color .15s;
+}
+.email-field input:focus{outline:none;border-color:#1a1a1a;box-shadow:0 0 0 3px rgba(0,0,0,.06)}
+
+.continue-btn{
+  width:100%;
+  padding:11px;
+  font-size:14px;
+  font-weight:500;
+  font-family:var(--font);
+  background:#1a1a1a;
+  color:#fff;
+  border:none;
+  border-radius:var(--radius-md);
+  cursor:pointer;
+  transition:opacity .15s;
+  margin-top:4px;
+}
+.continue-btn:hover{opacity:.85}
+
+.footer-note{
+  font-size:11px;
+  color:var(--text-tertiary);
+  text-align:center;
+  margin-top:28px;
+  line-height:1.6;
+}
+.footer-note a{color:var(--text-secondary);text-decoration:none}
+.footer-note a:hover{text-decoration:underline}
+
+/* Toast */
+.toast{
+  display:none;
+  position:fixed;
+  bottom:24px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#1a1a1a;
+  color:#fff;
+  padding:10px 20px;
+  border-radius:20px;
+  font-size:13px;
+  z-index:100;
+  white-space:nowrap;
+  animation:fadeup .25s ease;
+}
+.toast.show{display:block}
+@keyframes fadeup{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+</style>
+</head>
+<body>
+<div class="card">
+
+  <div class="logo-row">
+    <div class="logo-icon">
+      <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="6" height="6" rx="1.5" fill="white" opacity=".9"/>
+        <rect x="10" y="2" width="6" height="6" rx="1.5" fill="white" opacity=".6"/>
+        <rect x="2" y="10" width="6" height="6" rx="1.5" fill="white" opacity=".6"/>
+        <rect x="10" y="10" width="6" height="6" rx="1.5" fill="white" opacity=".3"/>
+      </svg>
+    </div>
+    <span class="logo-name">My Tasks</span>
+  </div>
+
+  <h1 class="heading">Welcome back</h1>
+  <p class="subheading">Sign in to access your projects, tasks and notes.</p>
+
+  <!-- Google -->
+  <button class="oauth-btn" onclick="handleOAuth('Google')">
+    <span class="btn-icon">
+      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+        <path d="M19.6 10.23c0-.68-.06-1.36-.17-2H10v3.79h5.4a4.6 4.6 0 01-2 3.02v2.5h3.24c1.9-1.75 3-4.32 3-7.31z" fill="#4285F4"/>
+        <path d="M10 20c2.7 0 4.97-.9 6.63-2.43l-3.24-2.51c-.9.6-2.04.96-3.39.96-2.6 0-4.81-1.76-5.6-4.12H1.05v2.6A10 10 0 0010 20z" fill="#34A853"/>
+        <path d="M4.4 11.9A6 6 0 014.17 10c0-.66.11-1.3.23-1.9V5.5H1.05A10 10 0 000 10c0 1.61.38 3.13 1.05 4.5l3.35-2.6z" fill="#FBBC04"/>
+        <path d="M10 3.96c1.47 0 2.79.51 3.83 1.5l2.87-2.87C14.96.99 12.7 0 10 0A10 10 0 001.05 5.5l3.35 2.6C5.19 5.72 7.4 3.96 10 3.96z" fill="#EA4335"/>
+      </svg>
+    </span>
+    <span class="btn-text">Continue with Google</span>
+    <span class="btn-arrow">›</span>
+  </button>
+
+  <!-- Microsoft -->
+  <button class="oauth-btn" onclick="handleOAuth('Microsoft')">
+    <span class="btn-icon">
+      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+        <rect x="1" y="1" width="8.5" height="8.5" fill="#F25022"/>
+        <rect x="10.5" y="1" width="8.5" height="8.5" fill="#7FBA00"/>
+        <rect x="1" y="10.5" width="8.5" height="8.5" fill="#00A4EF"/>
+        <rect x="10.5" y="10.5" width="8.5" height="8.5" fill="#FFB900"/>
+      </svg>
+    </span>
+    <span class="btn-text">Continue with Microsoft</span>
+    <span class="btn-arrow">›</span>
+  </button>
+
+  <!-- Zoho -->
+  <button class="oauth-btn" onclick="handleOAuth('Zoho')">
+    <span class="btn-icon">
+      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+        <rect width="20" height="20" rx="4" fill="#E42527"/>
+        <text x="3" y="15" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="white">Z</text>
+      </svg>
+    </span>
+    <span class="btn-text">Continue with Zoho</span>
+    <span class="btn-arrow">›</span>
+  </button>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <span class="divider-text">or</span>
+    <div class="divider-line"></div>
+  </div>
+
+  <div class="email-field">
+    <label for="email">Email address</label>
+    <input type="email" id="email" placeholder="you@example.com" onkeydown="if(event.key==='Enter')handleEmail()"/>
+  </div>
+  <button class="continue-btn" onclick="handleEmail()">Continue with email</button>
+
+  <p class="footer-note">
+    By signing in you agree to our
+    <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+  </p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function showToast(msg, duration){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), duration||3000);
+}
+
+function handleOAuth(provider){
+  // ─────────────────────────────────────────────────────────────────
+  // INTEGRATION POINT: Replace the alert below with real OAuth flow.
+  //
+  // Google:    https://developers.google.com/identity/oauth2/web
+  // Microsoft: https://learn.microsoft.com/en-us/azure/active-directory/develop/
+  // Zoho:      https://www.zoho.com/accounts/protocol/oauth.html
+  //
+  // Once you have a Client ID, initialize the respective SDK and
+  // call the sign-in method. On success, redirect to app.html.
+  // ─────────────────────────────────────────────────────────────────
+  showToast(provider + ' OAuth not yet configured — entering as guest');
+  setTimeout(()=>{ window.location.href='app.html'; }, 1200);
+}
+
+function handleEmail(){
+  const email=document.getElementById('email').value.trim();
+  if(!email || !email.includes('@')){
+    showToast('Please enter a valid email address');
+    return;
+  }
+  // INTEGRATION POINT: Send magic link or validate credentials here.
+  showToast('Signing in as ' + email + '…');
+  setTimeout(()=>{ window.location.href='app.html'; }, 1200);
+}
+</script>
+</body>
+</html>
